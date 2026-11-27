@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SK Mawang Taup | Dashboard</title>
+  <style>
+    :root{
+      --green:#16834a;
+      --green-dark:#0d6337;
+      --yellow:#f4c430;
+      --red:#d83a35;
+      --bg:#f4f7f5;
+      --card:#ffffff;
+      --text:#20312a;
+      --muted:#718078;
+      --border:#e5ebe7;
+      --shadow:0 10px 30px rgba(24,58,42,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    button{font:inherit}
+    .app{min-height:100vh;display:flex}
+    .sidebar{
+      width:260px;background:linear-gradient(180deg,var(--green-dark),var(--green));
+      color:#fff;padding:22px 16px;position:fixed;left:0;top:0;bottom:0;
+      z-index:20;overflow:auto;
+    }
+    .brand{display:flex;align-items:center;gap:12px;padding:8px 10px 22px;border-bottom:1px solid rgba(255,255,255,.18)}
+    .logo{
+      width:48px;height:48px;border-radius:14px;background:#fff;color:var(--green);
+      display:grid;place-items:center;font-weight:900;font-size:16px;
+    }
+    .brand h1{font-size:16px;margin:0;line-height:1.2}
+    .brand small{opacity:.8}
+    .nav{padding-top:18px}
+    .nav button{
+      width:100%;border:0;background:transparent;color:#eaf8ef;text-align:left;
+      padding:12px 13px;border-radius:12px;margin:3px 0;cursor:pointer;
+      display:flex;align-items:center;gap:12px;font-weight:600;
+    }
+    .nav button:hover,.nav button.active{background:rgba(255,255,255,.15);color:#fff}
+    .nav .icon{width:24px;text-align:center}
+    .main{margin-left:260px;width:calc(100% - 260px);min-height:100vh}
+    .topbar{
+      height:74px;background:#fff;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;padding:0 32px;
+      position:sticky;top:0;z-index:10;
+    }
+    .menu-btn{display:none;border:0;background:transparent;font-size:24px}
+    .top-title{font-weight:800}
+    .top-right{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:14px}
+    .avatar{width:38px;height:38px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;font-weight:800;color:#4e430e}
+    .content{padding:30px;max-width:1450px;margin:auto}
+    .hero{
+      background:linear-gradient(135deg,#0f6f3d,#199553);
+      color:#fff;border-radius:24px;padding:30px;box-shadow:var(--shadow);
+      display:flex;justify-content:space-between;align-items:center;gap:20px;
+      overflow:hidden;position:relative;
+    }
+    .hero:after{
+      content:"";position:absolute;width:230px;height:230px;border-radius:50%;
+      right:-60px;top:-100px;background:rgba(244,196,48,.18)
+    }
+    .hero h2{margin:0 0 8px;font-size:30px}
+    .hero p{margin:0;opacity:.9}
+    .hero-badge{position:relative;z-index:1;background:rgba(255,255,255,.12);padding:13px 16px;border-radius:14px;white-space:nowrap}
+    .section-title{margin:30px 0 15px;font-size:20px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .stat{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:20px;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;
+    }
+    .stat .label{font-size:13px;color:var(--muted);font-weight:700}
+    .stat .number{font-size:29px;font-weight:900;margin-top:4px}
+    .stat-icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:#edf8f1}
+    .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .quick-card{
+      border:1px solid var(--border);background:#fff;border-radius:var(--radius);padding:20px;
+      cursor:pointer;transition:.2s;box-shadow:var(--shadow)
+    }
+    .quick-card:hover{transform:translateY(-3px)}
+    .quick-card .qicon{font-size:27px}
+    .quick-card h3{font-size:16px;margin:13px 0 5px}
+    .quick-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+    .bottom{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+    .panel h3{margin:0 0 16px}
+    .notice{padding:14px 0;border-bottom:1px solid var(--border);display:flex;gap:12px}
+    .notice:last-child{border-bottom:0}
+    .notice-dot{width:10px;height:10px;border-radius:50%;background:var(--red);margin-top:6px;flex:none}
+    .notice strong{font-size:14px}
+    .notice p{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .event{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+    .event:last-child{border-bottom:0}
+    .date-box{width:52px;text-align:center;border-radius:12px;background:#fff6d7;padding:7px 3px;color:#745e08;font-weight:900}
+    .date-box span{display:block;font-size:11px}
+    .event strong{font-size:14px}.event p{margin:3px 0;color:var(--muted);font-size:12px}
+    .page{display:none}.page.active{display:block}
+    .placeholder{
+      background:#fff;border:1px dashed #b8c8bf;border-radius:18px;padding:40px;text-align:center;color:var(--muted)
+    }
+    .placeholder .big{font-size:44px}
+    .search-box{display:flex;gap:10px;margin:20px 0}
+    .search-box input{flex:1;padding:13px 15px;border:1px solid var(--border);border-radius:12px;outline:none}
+    .btn{border:0;border-radius:12px;padding:12px 17px;background:var(--green);color:#fff;font-weight:800;cursor:pointer}
+    .footer{text-align:center;color:var(--muted);font-size:12px;padding:30px}
+    @media(max-width:1000px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .quick{grid-template-columns:repeat(2,1fr)}
+      .bottom{grid-template-columns:1fr}
+    }
+    @media(max-width:760px){
+      .sidebar{transform:translateX(-100%);transition:.25s}
+      .sidebar.open{transform:translateX(0)}
+      .main{margin-left:0;width:100%}
+      .menu-btn{display:block}
+      .topbar{padding:0 18px}
+      .content{padding:18px}
+      .hero{padding:24px;display:block}
+      .hero-badge{display:inline-block;margin-top:18px}
+      .stats{grid-template-columns:1fr 1fr;gap:10px}
+      .quick{grid-template-columns:1fr 1fr;gap:10px}
+    }
+    @media(max-width:480px){
+      .stats,.quick{grid-template-columns:1fr}
+      .top-right .date{display:none}
+      .hero h2{font-size:24px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">SMT</div>
+      <div><h1>SK Mawang Taup</h1><small>School Dashboard</small></div>
+    </div>
+    <nav class="nav">
+      <button class="active" onclick="showPage('dashboard',this)"><span class="icon">🏠</span>Dashboard</button>
+      <button onclick="showPage('delima',this)"><span class="icon">👨‍🎓</span>DELIMA Finder</button>
+      <button onclick="showPage('opr',this)"><span class="icon">📝</span>OPR Sekolah</button>
+      <button onclick="showPage('academic',this)"><span class="icon">📚</span>Akademik</button>
+      <button onclick="showPage('co',this)"><span class="icon">🏃</span>Kokurikulum</button>
+      <button onclick="showPage('calendar',this)"><span class="icon">📅</span>Kalendar</button>
+      <button onclick="showPage('notice',this)"><span class="icon">📢</span>Pengumuman</button>
+      <button onclick="showPage('docs',this)"><span class="icon">📁</span>Dokumen</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="top-title" id="topTitle">Dashboard</div>
+      <div class="top-right"><span class="date" id="today"></span><div class="avatar">SMT</div></div>
+    </header>
+
+    <div class="content">
+      <section class="page active" id="dashboard">
+        <div class="hero">
+          <div><h2>Selamat Datang 👋</h2><p>SK Mawang Taup Digital School Dashboard</p></div>
+          <div class="hero-badge">Versi 1.0 • 2026</div>
+        </div>
+
+        <h2 class="section-title">Ringkasan Sekolah</h2>
+        <div class="stats">
+          <div class="stat"><div><div class="label">JUMLAH MURID</div><div class="number">128</div></div><div class="stat-icon">👨‍🎓</div></div>
+          <div class="stat"><div><div class="label">GURU & AKP</div><div class="number">18</div></div><div class="stat-icon">👩‍🏫</div></div>
+          <div class="stat"><div><div class="label">KELAS</div><div class="number">6</div></div><div class="stat-icon">🏫</div></div>
+          <div class="stat"><div><div class="label">AKTIVITI</div><div class="number">24</div></div><div class="stat-icon">📌</div></div>
+        </div>
+
+        <h2 class="section-title">Akses Pantas</h2>
+        <div class="quick">
+          <div class="quick-card" onclick="showPage('delima')"><div class="qicon">👨‍🎓</div><h3>DELIMA Finder</h3><p>Cari maklumat DELIMA murid dengan pantas.</p></div>
+          <div class="quick-card" onclick="showPage('opr')"><div class="qicon">📝</div><h3>OPR Sekolah</h3><p>Ruang untuk modul laporan dan OPR aktiviti.</p></div>
+          <div class="quick-card" onclick="showPage('academic')"><div class="qicon">📚</div><h3>Akademik</h3><p>Akses bahan, RPH dan maklumat akademik.</p></div>
+          <div class="quick-card" onclick="showPage('calendar')"><div class="qicon">📅</div><h3>Kalendar</h3><p>Lihat aktiviti dan tarikh penting sekolah.</p></div>
+        </div>
+
+        <div class="bottom" style="margin-top:18px">
+          <div class="panel">
+            <h3>📢 Pengumuman Terkini</h3>
+            <div class="notice"><span class="notice-dot"></span><div><strong>Selamat Datang ke Dashboard Sekolah</strong><p>Dashboard digital SK Mawang Taup telah disediakan untuk Versi 1.0.</p></div></div>
+            <div class="notice"><span class="notice-dot" style="background:var(--yellow)"></span><div><strong>Modul DELIMA Finder</strong><p>Modul carian murid akan dibangunkan dalam kemas kini seterusnya.</p></div></div>
+            <div class="notice"><span class="notice-dot" style="background:var(--green)"></span><div><strong>OPR Sekolah</strong><p>Ruang modul OPR disediakan untuk pembangunan seterusnya.</p></div></div>
+          </div>
+          <div class="panel">
+            <h3>📅 Aktiviti Akan Datang</h3>
+            <div class="event"><div class="date-box"><span>DIS</span>05</div><div><strong>Program Sekolah</strong><p>Maklumat aktiviti akan dikemas kini.</p></div></div>
+            <div class="event"><div class="date-box"><span>DIS</span>12</div><div><strong>Mesyuarat Guru</strong><p>Tarikh boleh diubah dalam versi seterusnya.</p></div></div>
+            <div class="event"><div class="date-box"><span>JAN</span>02</div><div><strong>Persediaan Sesi Baharu</strong><p>Perancangan dan penyelarasan sekolah.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="delima">
+        <div class="panel">
+          <h2>👨‍🎓 DELIMA Finder</h2>
+          <p>Cari murid berdasarkan nama atau ID DELIMA. Modul ini ialah ruang awal untuk sambungan database.</p>
+          <div class="search-box"><input id="studentSearch" placeholder="Contoh: nama murid / ID DELIMA"><button class="btn" onclick="demoSearch()">Cari</button></div>
+          <div id="searchResult" class="placeholder"><div class="big">🔎</div>Data murid belum disambungkan. Kita boleh masukkan fail Excel/CSV pada versi seterusnya.</div>
+        </div>
+      </section>
+
+      <section class="page" id="opr"><div class="placeholder"><div class="big">📝</div><h2>OPR Sekolah</h2><p>Modul penjana OPR akan dibina di sini.</p></div></section>
+      <section class="page" id="academic"><div class="placeholder"><div class="big">📚</div><h2>Akademik</h2><p>RPH, pentaksiran, DLP dan bahan akademik boleh dimasukkan di sini.</p></div></section>
+      <section class="page" id="co"><div class="placeholder"><div class="big">🏃</div><h2>Kokurikulum</h2><p>Sukan, SEGAK, kelab dan aktiviti kokurikulum akan dimasukkan di sini.</p></div></section>
+      <section class="page" id="calendar"><div class="placeholder"><div class="big">📅</div><h2>Kalendar Sekolah</h2><p>Kalendar aktiviti sekolah akan dibangunkan di sini.</p></div></section>
+      <section class="page" id="notice"><div class="placeholder"><div class="big">📢</div><h2>Pengumuman</h2><p>Pengumuman dan notis sekolah akan dipaparkan di sini.</p></div></section>
+      <section class="page" id="docs"><div class="placeholder"><div class="big">📁</div><h2>Pusat Dokumen</h2><p>Surat, borang, templat dan dokumen sekolah boleh diletakkan di sini.</p></div></section>
+
+      <div class="footer">© 2026 SK Mawang Taup • Digital School Dashboard V1.0</div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const titles = {
+    dashboard:"Dashboard", delima:"DELIMA Finder", opr:"OPR Sekolah", academic:"Akademik",
+    co:"Kokurikulum", calendar:"Kalendar", notice:"Pengumuman", docs:"Dokumen"
+  };
+  function showPage(id, btn){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('topTitle').textContent=titles[id]||"Dashboard";
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    document.getElementById('sidebar').classList.remove('open');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+  function demoSearch(){
+    const q=document.getElementById('studentSearch').value.trim();
+    const r=document.getElementById('searchResult');
+    if(!q){r.innerHTML='<div class="big">✏️</div>Sila masukkan nama murid atau ID DELIMA.';return}
+    r.innerHTML='<div class="big">🗂️</div><strong>Carian diterima:</strong> '+escapeHtml(q)+'<br><small>Database sebenar akan disambungkan pada versi seterusnya.</small>';
+  }
+  function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+  const now=new Date();
+  document.getElementById('today').textContent=now.toLocaleDateString('ms-MY',{day:'2-digit',month:'short',year:'numeric'});
+</script>
+</body>
+</html>
